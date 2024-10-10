@@ -110,4 +110,20 @@ class InfoParticipationController extends Controller
             'data' => $photo,
         ]);
     }
+
+    public function infoZabbix()
+    {
+        $infoParticipations = InfoParticipation::all();
+
+        $infoPhoto = InfoParticipation::whereNotNull('name_photo')->get();
+
+        $participations = count($infoParticipations);
+
+        $photos = count($infoPhoto);
+
+        return response()->json([
+            'success' => true,
+            'data' => ['participation:' => $participations, 'images_sent' =>  $photos],
+        ]);
+    }
 }
