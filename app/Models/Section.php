@@ -18,9 +18,9 @@ class Section extends Model
     public function rulesSection()
     {
         return [
-            'start_time' => '|in:1',
-            'in_progress' => '|in:1',
-            'end_time' =>  '|in:1',
+            'start_time' => 'in:1',
+            'in_progress' => 'in:1',
+            'end_time' =>  'in:1',
         ];
     }
     public function feedbackSection()
