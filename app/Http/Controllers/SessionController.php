@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Section;
+use App\Models\Session;
 use App\Http\Controllers\Controller;
 use App\Models\InfoParticipation;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
 
-class SectionController extends Controller
+class SessionController extends Controller
 {
-    protected $section;
+    protected $session;
 
-    public function __construct(Section $section)
+    public function __construct(Session $session)
     {
-        $this->section = $section;
+        $this->session = $session;
     }
 
-    public function sectionActive()
+    public function sessionActive()
     {
         //pega o ultimo id que esteja em em progresso
-        $section = Section::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+        $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
         // caso seja vazio disponivel
-        if ($section === null) {
+        if ($session === null) {
             return response()->json([
                 'success' => true,
                 'message' => 'Disponível para iniciar sessão',
@@ -32,21 +32,20 @@ class SectionController extends Controller
         }
 
         // caso seja diferente de vazio seção em andamento
-        if ($section !== null) {
-            $idSection = $section->id;
+        if ($session !== null) {
+            $idSession = $session->id;
             return response()->json([
                 'success' => false,
                 'message' => 'Sessão em andamento.',
-                'data' => $idSection
+                'data' => $idSession
             ]);
         }
     }
 
-    public function finishingSection(Request $request, $id)
+    public function finishingSession(Request $request, $id)
     {
-        $finishing = $this->section->find($id);
+        $finishing = $this->session->find($id);
 
-        // se id não existir retorna erro
         if ($finishing === null) {
             return response()->json([
                 'success' => false,
@@ -68,8 +67,8 @@ class SectionController extends Controller
 
         //se não houver nada na requisição encerra por tempo excedido
         if ($name_photo === null) {
-
-            $finishing = Section::where('id', $id)->update(['end_time' => 1]);
+            
+            Session::where('id', $id)->update(['end_time' => 1]);
 
             InfoParticipation::where('id', $id)->update(['end_participation' => $formatedDate]);
 
@@ -79,7 +78,7 @@ class SectionController extends Controller
             ]);
         }
 
-        $finishing = Section::where('id', $id)->update(['end_time' => 1]);
+        Session::where('id', $id)->update(['end_time' => 1]);
 
         InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo ,'end_participation' => $formatedDate]);
 

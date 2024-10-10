@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\InfoParticipationController;
-use App\Http\Controllers\SectionController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,10 +10,10 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 //verficar se tem sessão disponivel ou não
-Route::get('/section-active', [SectionController::class, 'sectionActive']);
+Route::get('/session-active', [SessionController::class, 'sessionActive']);
 
 //finalizar sessão ativa
-Route::post('/finishing-section/{id}', [SectionController::class, 'finishingSection']);
+Route::post('/finishing-session/{id}', [SessionController::class, 'finishingSession']);
 
 //iniciar sessão e idUser
 Route::post('/start-participation', [InfoParticipationController::class, "startParticipation"]);

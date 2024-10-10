@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InfoParticipation;
 use App\Http\Controllers\Controller;
-use App\Models\Section;
+use App\Models\Session;
 use DateTime;
 use DateTimeZone;
 
@@ -30,17 +30,17 @@ class InfoParticipationController extends Controller
         $formatedDate = $date->format('d-m-Y H:i:s');
 
         //pega o ultimo id que esteja em em progresso
-        $section = Section::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+        $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
         // caso seja diferente de vazio seção em andamento
-        if ($section !== null) {
+        if ($session !== null) {
 
-            $idSection = $section->id;
+            $idSession = $session->id;
             
             return response()->json([
                 'success' => false,
                 'message' => 'Sessão em andamento.',
-                'data' => $idSection
+                'data' => $idSession
             ]);
         }
 
@@ -55,24 +55,24 @@ class InfoParticipationController extends Controller
             ]);
         }
 
-        $section = Section::create([
+        $session = Session::create([
             'start_time' => 1,
             'in_progress'  => 1,
         ]);
 
-        if (!$section) {
+        if (!$session) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao criar idSection',
             ]);
         }
 
-        $idSection = $section->id;
+        $idSession = $session->id;
 
         return response()->json([
             'success' => true,
             'message' => 'Usuario e seção criados com sucesso.',
-            'data' => ['idUser' => $info, 'idSection' => $idSection],
+            'data' => ['idUser' => $info, 'idSection' => $idSession],
         ]);
     }
 
