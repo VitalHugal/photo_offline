@@ -39,7 +39,7 @@ class SectionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Sessão em andamento.',
-                'idSection' => $idSection
+                'data' => $idSection
             ]);
         }
     }

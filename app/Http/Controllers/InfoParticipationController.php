@@ -34,20 +34,31 @@ class InfoParticipationController extends Controller
             'start_participation' => $formatedDate,
         ]);
 
+        if (!$info) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar idUser',
+            ]);
+        }
+
         $section = Section::create([
             'start_time' => 1,
             'in_progress'  => 1,
         ]);
 
-        if ($section == true) {
-            $idSection = $section->id;
+        if (!$section) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar idSection',
+            ]);
         }
+
+        $idSection = $section->id;
 
         return response()->json([
             'success' => true,
             'message' => 'Usuario e seção criados com sucesso.',
-            'idUser' => $info,
-            'idSection' => $idSection,
+            'data' => ['idUser' => $info, 'idSection' => $idSection],
         ]);
     }
 
