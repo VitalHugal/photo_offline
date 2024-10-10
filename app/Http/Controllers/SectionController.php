@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Section;
 use App\Http\Controllers\Controller;
 use App\Models\InfoParticipation;
-use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
-use Symfony\Polyfill\Intl\Idn\Info;
 
 class SectionController extends Controller
 {
