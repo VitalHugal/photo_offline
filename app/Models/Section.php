@@ -14,4 +14,19 @@ class Section extends Model
     protected $fillable = ['start_time', 'in_progress', 'end_time',];
     protected $table = 'sections';
     protected $dates = 'deleted_at';
+
+    public function rulesSection()
+    {
+        return [
+            'start_time' => '|in:1',
+            'in_progress' => '|in:1',
+            'end_time' =>  '|in:1',
+        ];
+    }
+    public function feedbackSection()
+    {
+        return [
+            'in' => 'Válido apenas 1.',
+        ];
+    }
 }

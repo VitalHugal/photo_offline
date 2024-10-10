@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('info_participations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('start_participation')->nullable();
             $table->string('end_participation')->nullable();
-            $table->string('url_photo')->nullable();
+            $table->string('name_photo')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

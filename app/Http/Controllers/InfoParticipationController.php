@@ -4,63 +4,76 @@ namespace App\Http\Controllers;
 
 use App\Models\InfoParticipation;
 use App\Http\Controllers\Controller;
+use App\Models\Section;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 
 class InfoParticipationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $info;
+
+    public function __construct(InfoParticipation $info)
     {
-        //
+        $this->info = $info;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function startParticipation()
     {
-        //
+        $date = new DateTime();
+        $serverTimezone = $date->getTimezone()->getName();
+        $saoPauloTimezone = 'America/Sao_Paulo';
+
+        if ($serverTimezone !== $saoPauloTimezone) {
+            $date->setTimezone(new DateTimeZone($saoPauloTimezone));
+        }
+
+        $formatedDate = $date->format('d-m-Y H:i:s');
+
+        $info = $this->info->create([
+            'start_participation' => $formatedDate,
+        ]);
+
+        $section = Section::create([
+            'start_time' => 1,
+            'in_progress'  => 1,
+        ]);
+
+        if ($section == true) {
+            $idSection = $section->id;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario e seção criados com sucesso.',
+            'idUser' => $info,
+            'idSection' => $idSection,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function getPhoto($id)
     {
-        //
-    }
+        $idParticipation = $this->info->find($id);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(InfoParticipation $infoParticipation)
-    {
-        //
-    }
+        if ($idParticipation === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum resultado encontrado.',
+            ]);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(InfoParticipation $infoParticipation)
-    {
-        //
-    }
+        $photo = $idParticipation->name_photo;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, InfoParticipation $infoParticipation)
-    {
-        //
-    }
+        if ($photo === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhuma foto encontrada.',
+            ]);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(InfoParticipation $infoParticipation)
-    {
-        //
+        return response()->json([
+            'success' => true,
+            'data' => $photo,
+        ]);
     }
 }

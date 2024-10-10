@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('start_time');
-            $table->string('in_progress');
-            $table->string('end_time');
+            $table->string('start_time')->default(value: 0);
+            $table->string('in_progress')->default(value: 0);
+            $table->string('end_time')->default(value: 0);
             $table->timestamps();
             $table->softDeletes();
         });
