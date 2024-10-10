@@ -36,7 +36,7 @@ class InfoParticipationController extends Controller
         if ($session !== null) {
 
             $idSession = $session->id;
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Sessão em andamento.',
@@ -83,7 +83,16 @@ class InfoParticipationController extends Controller
         if ($idParticipation === null) {
             return response()->json([
                 'success' => false,
-                'message' => 'Nenhum resultado encontrado.',
+                'message' => 'Nenhum id encontrado.',
+            ]);
+        }
+
+        $session = Session::where('id', $id)->where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->first();
+
+        if ($session !== null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Em andamento...',
             ]);
         }
 
