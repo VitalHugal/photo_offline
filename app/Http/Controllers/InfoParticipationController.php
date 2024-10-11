@@ -19,6 +19,7 @@ class InfoParticipationController extends Controller
 
     public function startParticipation()
     {
+        //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
         $date = new DateTime();
         $serverTimezone = $date->getTimezone()->getName();
         $saoPauloTimezone = 'America/Sao_Paulo';
@@ -123,7 +124,8 @@ class InfoParticipationController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => ['participation:' => $participations, 'images_sent' =>  $photos],
+            'participation' => $participations,
+            'images_sent' =>  $photos,
         ]);
     }
 }

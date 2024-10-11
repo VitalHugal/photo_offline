@@ -21,4 +21,5 @@ Route::post('/start-participation', [InfoParticipationController::class, "startP
 //recuperar foto
 Route::get('/get-photo/{id}', [InfoParticipationController::class, "getPhoto"]);
 
+//informações sobre as participações
 Route::get('/info-zabbix', [InfoParticipationController::class, "infoZabbix"]);

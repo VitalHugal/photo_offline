@@ -20,7 +20,7 @@ class SessionController extends Controller
 
     public function sessionActive()
     {
-        //pega o ultimo id que esteja em em progresso
+        //pega o ultimo id que esteja em progresso
         $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
         // caso seja vazio disponivel
