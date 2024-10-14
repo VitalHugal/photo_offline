@@ -67,7 +67,7 @@ class SessionController extends Controller
 
         //se não houver nada na requisição encerra por tempo excedido
         if ($name_photo === null) {
-            
+
             Session::where('id', $id)->update(['end_time' => 1]);
 
             InfoParticipation::where('id', $id)->update(['end_participation' => $formatedDate]);
@@ -80,7 +80,7 @@ class SessionController extends Controller
 
         Session::where('id', $id)->update(['end_time' => 1]);
 
-        InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo ,'end_participation' => $formatedDate]);
+        InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
 
         return response()->json([
             'success' => true,

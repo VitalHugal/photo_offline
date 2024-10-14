@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Session;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class InfoParticipationController extends Controller
 {
@@ -17,7 +19,7 @@ class InfoParticipationController extends Controller
         $this->info = $info;
     }
 
-    public function startParticipation()
+    public function startParticipation(Request $request)
     {
         //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
         $date = new DateTime();
@@ -44,6 +46,11 @@ class InfoParticipationController extends Controller
                 'data' => $idSession
             ]);
         }
+
+        $info = $request->validate(
+            $this->info->rulesParticipation(),
+            $this->info->feedbackParticipation()
+        );
 
         $info = $this->info->create([
             'start_participation' => $formatedDate,
