@@ -34,7 +34,7 @@ class InfoParticipation extends Model
             'max:11' => 'CPF deve conter 11 dígitos.',
             'required' => 'Campo obrigatório.',
             'email' => 'E-mail inválido.',
-            'CPF.in' => 'Por favor, digite apenas numeros.',
+            'digits' => 'O CPF deve conter 11 dígitos.',
             
         ];
     }

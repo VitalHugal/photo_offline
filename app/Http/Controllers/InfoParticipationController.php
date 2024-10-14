@@ -21,7 +21,6 @@ class InfoParticipationController extends Controller
 
     public function startParticipation(Request $request)
     {
-
         //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
         $date = new DateTime();
         $serverTimezone = $date->getTimezone()->getName();
@@ -53,10 +52,28 @@ class InfoParticipationController extends Controller
             $this->info->feedbackParticipation()
         );
 
+        $CPF = $request->CPF;
+
+        $info = InfoParticipation::all('CPF');
+
+        $cpfs = []; 
+
+        for ($i = 0; $i < count($info); $i++) {
+            $cpf = decrypt($info[$i]->CPF);
+            $cpfs[] = $cpf;  
+        }
+
+        if (in_array($CPF, $cpfs)) {
+            return response()->json([
+               'success' => false,
+               'message' => 'CPF já cadastrado.'
+            ]);
+        }
+
         $info = $this->info->create([
             'name' => $request->name,
             'email' => $request->email,
-            'CPF' => $request->CPF,
+            'CPF' => encrypt($request->CPF),
             'start_participation' => $formatedDate,
         ]);
 
@@ -84,7 +101,7 @@ class InfoParticipationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Usuario e seção criados com sucesso.',
-            'data' => ['idUser' => $info, 'idSection' => $idSession],
+            'data' => ['idUser' => $info['id'], 'idSection' => $idSession],
         ]);
     }
 
