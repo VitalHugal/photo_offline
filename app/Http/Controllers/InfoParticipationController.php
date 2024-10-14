@@ -21,6 +21,7 @@ class InfoParticipationController extends Controller
 
     public function startParticipation(Request $request)
     {
+
         //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
         $date = new DateTime();
         $serverTimezone = $date->getTimezone()->getName();
@@ -47,12 +48,15 @@ class InfoParticipationController extends Controller
             ]);
         }
 
-        $info = $request->validate(
+        $request->validate(
             $this->info->rulesParticipation(),
             $this->info->feedbackParticipation()
         );
 
         $info = $this->info->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'CPF' => $request->CPF,
             'start_participation' => $formatedDate,
         ]);
 

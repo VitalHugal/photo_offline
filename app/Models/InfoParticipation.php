@@ -23,7 +23,7 @@ class InfoParticipation extends Model
             'name_photo' =>  'max:255|nullable',
             'name' => 'required|max:255',
             'email' => 'required|email|max:255',
-            "CPF" => 'required|max:11|interger|unique',
+            "CPF" => 'required|digits:11',
         ];
     }
     public function feedbackParticipation()
@@ -34,8 +34,8 @@ class InfoParticipation extends Model
             'max:11' => 'CPF deve conter 11 dígitos.',
             'required' => 'Campo obrigatório.',
             'email' => 'E-mail inválido.',
-            'interger' => 'Por favor, digite apenas numeros.',
-            'unique' => 'CPF já cadastrado.'
+            'CPF.in' => 'Por favor, digite apenas numeros.',
+            
         ];
     }
 }
