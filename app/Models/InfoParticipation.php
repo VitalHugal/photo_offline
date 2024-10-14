@@ -31,7 +31,6 @@ class InfoParticipation extends Model
         return [
             'in' => 'Válido apenas 1.',
             'max:255' => 'Válido até 255 caracteres.',
-            'max:11' => 'CPF deve conter 11 dígitos.',
             'required' => 'Campo obrigatório.',
             'email' => 'E-mail inválido.',
             'digits' => 'O CPF deve conter 11 dígitos.',
