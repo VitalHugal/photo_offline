@@ -11,7 +11,7 @@ class InfoParticipation extends Model
 
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['start_participation', 'end_participation', 'name_photo', 'name', "email", "CPF"];
+    protected $fillable = ['start_participation', 'end_participation', 'name_photo', 'name', "email", "CPF", 'hash_CPF'];
     protected $table = 'info_participations';
     protected $dates = 'deleted_at';
 

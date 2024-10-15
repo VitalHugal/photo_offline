@@ -54,26 +54,25 @@ class InfoParticipationController extends Controller
 
         $CPF = $request->CPF;
 
-        $info = InfoParticipation::all('CPF');
+        $existsCPF = InfoParticipation::where('CPF', $CPF)->first();
 
-        $cpfs = []; 
-
-        for ($i = 0; $i < count($info); $i++) {
-            $cpf = decrypt($info[$i]->CPF);
-            $cpfs[] = $cpf;  
-        }
-
-        if (in_array($CPF, $cpfs)) {
-            return response()->json([
-               'success' => false,
-               'message' => 'CPF já cadastrado.'
-            ]);
+        if ($existsCPF) {
+            
+            $verifyCPF = Hash::check($CPF, $existsCPF->hash_CPF);
+            
+            if ($verifyCPF) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'CPF já cadastrado.'
+                ]);
+            }
         }
 
         $info = $this->info->create([
             'name' => $request->name,
             'email' => $request->email,
-            'CPF' => encrypt($request->CPF),
+            'CPF' => $request->CPF,
+            'hash_CPF' => Hash::make($formatedDate),
             'start_participation' => $formatedDate,
         ]);
 
