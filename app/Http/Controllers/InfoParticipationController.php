@@ -72,7 +72,7 @@ class InfoParticipationController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'CPF' => $request->CPF,
-            'hash_CPF' => Hash::make($formatedDate),
+            'hash_CPF' => Hash::make($request->CPF),
             'start_participation' => $formatedDate,
         ]);
 
