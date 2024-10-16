@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InfoParticipationController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\teste;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
