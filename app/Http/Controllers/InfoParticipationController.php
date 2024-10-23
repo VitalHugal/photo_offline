@@ -55,43 +55,6 @@ class InfoParticipationController extends Controller
                 $this->info->feedbackParticipation()
             );
 
-
-            $CPF = $request->CPF;
-            $telephone = $request->telephone;
-            $CPF_hash = password_hash($CPF, PASSWORD_BCRYPT);
-
-            if ($info) {
-                $e = new Encrypt();
-                $CPF = $e->encrypt($CPF);
-                $telephone = $e->encrypt($telephone);
-            }
-
-            $hashes = InfoParticipation::pluck('CPF_hash');
-
-            $exists = false;
-
-            for ($i = 0; $i < count($hashes); $i++) {
-                $verify = password_verify($request->CPF, $hashes[$i]);
-                if ($verify) {
-                    $exists = true;
-                    break;
-                }
-            }
-
-            if ($exists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Usuário já cadastrado.'
-                ]);
-            }
-
-            $info = $this->info->create([
-                'CPF' => $CPF,
-                'CPF_hash' => $CPF_hash,
-                'telephone' => $telephone,
-                'start_participation' => $formatedDate,
-            ]);
-
             if (!$info) {
                 return response()->json([
                     'success' => false,

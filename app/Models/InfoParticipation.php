@@ -11,7 +11,7 @@ class InfoParticipation extends Model
 
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['start_participation', 'end_participation', 'name_photo', 'telephone','CPF', "CPF_hash"];
+    protected $fillable = ['start_participation', 'end_participation', 'name_photo',];
     protected $table = 'info_participations';
     protected $dates = 'deleted_at';
 
@@ -21,9 +21,6 @@ class InfoParticipation extends Model
             'start_participation' => 'in:1|nullable',
             'end_participation' =>  'in:1|nullable',
             'name_photo' =>  'max:255|nullable',
-            'telephone' => 'required|max:9',
-            "CPF" => 'required|digits:11',
-            "CPF_hash" => '',
         ];
     }
     public function feedbackParticipation()
@@ -31,9 +28,6 @@ class InfoParticipation extends Model
         return [
             'in' => 'Válido apenas 1.',
             'max:255' => 'Válido até 255 caracteres.',
-            'required' => 'Campo obrigatório.',
-            'max:11' => 'O campo deve conter até 9 dígitos.',           
-            'digits' => 'O campo deve conter até 11 dígitos.',           
         ];
     }
 }

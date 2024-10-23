@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('info_participations', function (Blueprint $table) {
+        Schema::create('register', function (Blueprint $table) {
             $table->id();
-            $table->string('start_participation')->nullable();
-            $table->string('end_participation')->nullable();
-            $table->string('name_photo')->nullable();
+            $table->string('telephone');
+            $table->string('CPF');
+            $table->string('CPF_hash');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('info_participations');
+        Schema::dropIfExists('register');
     }
 };
