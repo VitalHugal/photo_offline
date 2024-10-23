@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('telephone');
             $table->string('CPF');
+            $table->string('CPF_hash');
             $table->string('start_participation')->nullable();
             $table->string('end_participation')->nullable();
             $table->string('name_photo')->nullable();

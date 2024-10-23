@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Session;
 use DateTime;
 use DateTimeZone;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,80 +23,102 @@ class InfoParticipationController extends Controller
 
     public function startParticipation(Request $request)
     {
-        //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
-        $date = new DateTime();
-        $serverTimezone = $date->getTimezone()->getName();
-        $saoPauloTimezone = 'America/Sao_Paulo';
+        try {
+            //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
+            $date = new DateTime();
+            $serverTimezone = $date->getTimezone()->getName();
+            $saoPauloTimezone = 'America/Sao_Paulo';
 
-        if ($serverTimezone !== $saoPauloTimezone) {
-            $date->setTimezone(new DateTimeZone($saoPauloTimezone));
-        }
+            if ($serverTimezone !== $saoPauloTimezone) {
+                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
+            }
 
-        $formatedDate = $date->format('d-m-Y H:i:s');
+            $formatedDate = $date->format('d-m-Y H:i:s');
 
-        //pega o ultimo id que esteja em em progresso
-        $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+            //pega o ultimo id que esteja em em progresso
+            $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
-        // caso seja diferente de vazio seção em andamento
-        if ($session !== null) {
+            // caso seja diferente de vazio seção em andamento
+            if ($session !== null) {
+
+                $idSession = $session->id;
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sessão em andamento.',
+                    'data' => $idSession
+                ]);
+            }
+
+            $info = $request->validate(
+                $this->info->rulesParticipation(),
+                $this->info->feedbackParticipation()
+            );
+
+            $CPF = $request->CPF;
+            $telephone = $request->telephone;
+            $CPF_hash = Hash::make($CPF);
+            
+            if ($info) {
+                $e = new Encrypt();
+                $CPF = $e->encrypt($CPF);
+                $telephone = $e->encrypt($telephone);
+            }
+
+            $verify = InfoParticipation::all('CPF_hash');
+
+            for ($i = 0; $i < count($verify); $i++) {
+                $CPFexists = Hash::check($CPF_hash, $request->CPF);
+            }
+
+            if ($CPFexists) {
+                dd('ja cadastrado.');
+            }
+
+            $info = $this->info->create([
+                'CPF' => $CPF,
+                'CPF_hash' => $CPF_hash,
+                'telephone' => $telephone,
+                'start_participation' => $formatedDate,
+            ]);
+
+            if (!$info) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao criar idUser',
+                ]);
+            }
+
+            $session = Session::create([
+                'start_time' => 1,
+                'in_progress'  => 1,
+            ]);
+
+            if (!$session) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao criar idSection',
+                ]);
+            }
 
             $idSession = $session->id;
 
             return response()->json([
-                'success' => false,
-                'message' => 'Sessão em andamento.',
-                'data' => $idSession
+                'success' => true,
+                'message' => 'Usuario e seção criados com sucesso.',
+                'data' => ['idUser' => $info['id'], 'idSection' => $idSession],
             ]);
-        }
-
-        $info = $request->validate(
-            $this->info->rulesParticipation(),
-            $this->info->feedbackParticipation()
-        );
-
-        $CPF = '';
-        $$telephone = '';
-
-        if ($info) {
-            $e = new Encrypt();
-            $request->has['CPF'] = $e->encrypt($CPF);
-            $request->has['telephone'] = $e->encrypt($telephone);
-        }
-
-        dd($info);
-
-        $info = $this->info->create([
-            'CPF' => $request->CPF,
-            'telephone' => $request->telephone,
-            'start_participation' => $formatedDate,
-        ]);
-
-        if (!$info) {
+        } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao criar idUser',
+                'message' => 'Erro: ' . $qe->getMessage(),
             ]);
-        }
-
-        $session = Session::create([
-            'start_time' => 1,
-            'in_progress'  => 1,
-        ]);
-
-        if (!$session) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao criar idSection',
+                'message' => 'Erro: ' . $e->getMessage(),
             ]);
         }
-
-        $idSession = $session->id;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuario e seção criados com sucesso.',
-            'data' => ['idUser' => $info['id'], 'idSection' => $idSession],
-        ]);
     }
 
     public function getPhoto($id)
