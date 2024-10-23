@@ -47,32 +47,25 @@ class InfoParticipationController extends Controller
             ]);
         }
 
-        $request->validate(
+        $info = $request->validate(
             $this->info->rulesParticipation(),
             $this->info->feedbackParticipation()
         );
 
-        $CPF = $request->CPF;
+        $CPF = '';
+        $$telephone = '';
 
-        $existsCPF = InfoParticipation::where('CPF', $CPF)->first();
-
-        if ($existsCPF) {
-            
-            $verifyCPF = Hash::check($CPF, $existsCPF->hash_CPF);
-            
-            if ($verifyCPF) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'CPF já cadastrado.'
-                ]);
-            }
+        if ($info) {
+            $e = new Encrypt();
+            $request->has['CPF'] = $e->encrypt($CPF);
+            $request->has['telephone'] = $e->encrypt($telephone);
         }
 
+        dd($info);
+
         $info = $this->info->create([
-            'name' => $request->name,
-            'email' => $request->email,
             'CPF' => $request->CPF,
-            'hash_CPF' => Hash::make($request->CPF),
+            'telephone' => $request->telephone,
             'start_participation' => $formatedDate,
         ]);
 

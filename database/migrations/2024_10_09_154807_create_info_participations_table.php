@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('info_participations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
+            $table->string('telephone');
             $table->string('CPF');
-            $table->string('hash_CPF');
             $table->string('start_participation')->nullable();
             $table->string('end_participation')->nullable();
             $table->string('name_photo')->nullable();
