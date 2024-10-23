@@ -55,24 +55,34 @@ class InfoParticipationController extends Controller
                 $this->info->feedbackParticipation()
             );
 
+
             $CPF = $request->CPF;
             $telephone = $request->telephone;
-            $CPF_hash = Hash::make($CPF);
-            
+            $CPF_hash = password_hash($CPF, PASSWORD_BCRYPT);
+
             if ($info) {
                 $e = new Encrypt();
                 $CPF = $e->encrypt($CPF);
                 $telephone = $e->encrypt($telephone);
             }
 
-            $verify = InfoParticipation::all('CPF_hash');
+            $hashes = InfoParticipation::pluck('CPF_hash');
 
-            for ($i = 0; $i < count($verify); $i++) {
-                $CPFexists = Hash::check($CPF_hash, $request->CPF);
+            $exists = false;
+
+            for ($i = 0; $i < count($hashes); $i++) {
+                $verify = password_verify($request->CPF, $hashes[$i]);
+                if ($verify) {
+                    $exists = true;
+                    break;
+                }
             }
 
-            if ($CPFexists) {
-                dd('ja cadastrado.');
+            if ($exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário já cadastrado.'
+                ]);
             }
 
             $info = $this->info->create([
@@ -111,12 +121,12 @@ class InfoParticipationController extends Controller
         } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro: ' . $qe->getMessage(),
+                'message' => 'Error DB: ' . $qe->getMessage(),
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro: ' . $e->getMessage(),
+                'message' => 'Error: ' . $e->getMessage(),
             ]);
         }
     }
