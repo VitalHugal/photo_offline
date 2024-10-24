@@ -11,26 +11,27 @@ use Illuminate\Http\Request;
 
 class UserRegisterController extends Controller
 {
-    protected $register;
+    protected $user_register;
 
-    public function __construct(UserRegister $register)
+    public function __construct(UserRegister $user_register)
     {
-        $this->register = $register;
+        $this->user_register = $user_register;
     }
     public function register(Request $request)
     {
         try {
-            $register = $request->validate(
-                $this->register->rulesRegister(),
-                $this->register->feedbackRegister()
-            );
 
+            $user_register = $request->validate([
+                $this->user_register->rulesRegister(),
+                $this->user_register->feedbackRegister()
+            ]);
 
             $CPF = $request->CPF;
             $telephone = $request->telephone;
             $CPF_hash = password_hash($CPF, PASSWORD_BCRYPT);
+            $adulthood = $request->adulthood;
 
-            if ($register) {
+            if ($user_register) {
                 $e = new Encrypt();
                 $CPF = $e->encrypt($CPF);
                 $telephone = $e->encrypt($telephone);
@@ -69,20 +70,21 @@ class UserRegisterController extends Controller
                 ]);
             }
 
-            $register = $this->register->create([
+            $user_register = $this->user_register->create([
                 'CPF' => $CPF,
                 'CPF_hash' => $CPF_hash,
                 'telephone' => $telephone,
+                'adulthood' => $adulthood,
             ]);
 
-            if (!$register) {
+            if (!$user_register) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Erro ao cadastrar usuário.',
                 ]);
             }
 
-            if ($register) {
+            if ($user_register) {
 
                 $session = Session::create([
                     'start_time' => 1,
@@ -93,7 +95,7 @@ class UserRegisterController extends Controller
                     'success' => true,
                     'message' => 'Cadastrado com sucesso.',
                     'data' => [
-                        'idUser' => $register['id'],
+                        'idUser' => $user_register['id'],
                         'idSession' => $session->id
                     ],
                 ]);
