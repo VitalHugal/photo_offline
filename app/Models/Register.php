@@ -22,8 +22,14 @@ class Register extends Model
             "CPF" => 'required|digits:11',
             "CPF_hash" => '',
             "fk_id_photo" => '',
-            'responsible_name' => 'required|max:255|nullable',
-            'responsible_cpf' => 'required|digits:11|nullable', 
+        ];
+    }
+    
+    public function rulesRegisterResponsible()
+    {
+        return [
+            'responsible_name' => 'required|max:255|',
+            'responsible_cpf' => 'required|digits:11|', 
             'responsible_cpf_hash' => '',
         ];
     }
@@ -35,7 +41,15 @@ class Register extends Model
             'max:255' => 'O campo deve conter até 255 caracteres.',
             'digits:11' => 'O campo deve conter até 11 dígitos.',
             'boolean' => 'Valido apenas 0 ou 1.',
-            'integer' => 'Válido apenas números',
+        ];
+    }
+    
+    public function feedbackRegisterResponsible()
+    {
+        return [
+            'required' => 'Campo obrigatório.',
+            'max:255' => 'O campo deve conter até 255 caracteres.',
+            'digits:11' => 'O campo deve conter até 11 dígitos.',
         ];
     }
 }

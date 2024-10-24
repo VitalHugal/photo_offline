@@ -71,16 +71,42 @@ class RegisterController extends Controller
                 ]);
             }
 
-            if($request->adulthood == 0){
-                dd('aqui');
+            if ($request->adulthood == 1) {
+                $register = $this->register->create([
+                    'CPF' => $CPF,
+                    'CPF_hash' => $CPF_hash,
+                    'name' => $name,
+                    'adulthood' => $adulthood,
+                ]);
             }
 
-            $register = $this->register->create([
-                'CPF' => $CPF,
-                'CPF_hash' => $CPF_hash,
-                'name' => $name,
-                'adulthood' => $adulthood,
-            ]);
+            if ($request->adulthood == 0) {
+
+                $register = $request->validate(
+                    $this->register->rulesRegisterResponsible(),
+                    $this->register->feedbackRegisterResponsible(),
+                );
+
+                if ($register) {
+                    $responsible_cpf = $request->responsible_cpf;
+                    $responsible_name = $request->responsible_name;
+                    $responsible_cpf_hash = password_hash($responsible_cpf, PASSWORD_BCRYPT);
+
+                    $e = new Encrypt();
+                    $responsible_cpf = $e->encrypt($responsible_cpf);
+                    $responsible_name = $e->encrypt($responsible_name);
+                }
+
+                $register = $this->register->create([
+                    'CPF' => $CPF,
+                    'CPF_hash' => $CPF_hash,
+                    'name' => $name,
+                    'adulthood' => $adulthood,
+                    'responsible_cpf' => $responsible_cpf,
+                    'responsible_cpf_hash' => $responsible_cpf_hash,
+                    'responsible_name' => $responsible_name,
+                ]);
+            }
 
             if (!$register) {
                 return response()->json([
