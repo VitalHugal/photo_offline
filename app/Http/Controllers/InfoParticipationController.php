@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InfoParticipation;
 use App\Http\Controllers\Controller;
-use App\Models\UserRegister;
+use App\Models\Register;
 use App\Models\Session;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +27,7 @@ class InfoParticipationController extends Controller
     {
         try {
 
-            $idUser = UserRegister::orderBy('id', 'desc')->first();
+            $idUser = Register::orderBy('id', 'desc')->first();
 
             $idUserId = $idUser ? $idUser->id : null;
 
@@ -134,12 +134,33 @@ class InfoParticipationController extends Controller
             ]);
         }
 
-        // return Storage::disk('public')->download('logo/DjOzGzVsvy0YWx9L06bkMwkKk2u8Xd7BUS0yO64z.png');
-
         return response()->json([
             'success' => true,
             'data' => $photo,
         ]);
+    }
+
+    public function downloadPhoto($id)
+    {
+        $idParticipation = $this->info->find($id);
+
+        if ($idParticipation === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum id encontrado.',
+            ]);
+        }
+
+        $photo = $idParticipation->name_photo;
+
+        if (!$photo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhuma foto encontrada.',
+            ]);
+        }
+
+        return Storage::disk('public')->download($photo);
     }
 
     public function infoZabbix()

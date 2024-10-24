@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Session;
 use App\Http\Controllers\Controller;
 use App\Models\InfoParticipation;
-use App\Models\UserRegister;
+use App\Models\Register;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -66,11 +66,12 @@ class SessionController extends Controller
 
         // $name_photo = $request->file('name_photo');
         
+
         $name_photo = $request->input('name_photo');
 
         // ////
         // $logo_imagem = $request->file('name_photo');
-        // $logo_imagem_urn = $logo_imagem->store('logo', 'public');
+        // $logo_imagem_urn = $logo_imagem->store('images', 'public');
         // dd($logo_imagem_urn);
         // ////
 
@@ -81,8 +82,8 @@ class SessionController extends Controller
 
             InfoParticipation::where('id', $id)->update(['end_participation' => $formatedDate]);
 
-            UserRegister::where('id', $id)->update(['fk_id_photo' => null]);
-            
+            Register::where('id', $id)->update(['fk_id_photo' => null]);
+
 
             return response()->json([
                 'success' => false,
@@ -94,7 +95,7 @@ class SessionController extends Controller
 
         InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
 
-        UserRegister::where('id', $id)->update(['fk_id_photo' => $id]);
+        Register::where('id', $id)->update(['fk_id_photo' => $id]);
 
         return response()->json([
             'success' => true,

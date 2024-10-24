@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\InfoParticipationController;
-use App\Http\Controllers\UserRegisterController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\teste;
 use Illuminate\Http\Request;
@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/register', [UserRegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register']);
 
 //verficar se tem sessão disponivel ou não
 Route::get('/session-active', [SessionController::class, 'sessionActive']);
@@ -24,6 +24,9 @@ Route::post('/start-participation', [InfoParticipationController::class, "startP
 
 //recuperar foto
 Route::get('/get-photo/{id}', [InfoParticipationController::class, "getPhoto"]);
+
+//download foto
+Route::get('/download-photo/{id}', [InfoParticipationController::class, "downloadPhoto"]);
 
 //informações sobre as participações
 Route::get('/info-zabbix', [InfoParticipationController::class, "infoZabbix"]);

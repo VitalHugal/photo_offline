@@ -3,38 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserRegister;
+use App\Models\Register;
 use App\Models\Session;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class UserRegisterController extends Controller
+class RegisterController extends Controller
 {
-    protected $user_register;
+    protected $register;
 
-    public function __construct(UserRegister $user_register)
+    public function __construct(Register $register)
     {
-        $this->user_register = $user_register;
+        $this->register = $register;
     }
     public function register(Request $request)
     {
         try {
 
-            $user_register = $request->validate([
-                $this->user_register->rulesRegister(),
-                $this->user_register->feedbackRegister()
-            ]);
+            $register = $request->validate(
+                $this->register->rulesRegister(),
+                $this->register->feedbackRegister()
+            );
 
-            $CPF = $request->CPF;
-            $telephone = $request->telephone;
-            $CPF_hash = password_hash($CPF, PASSWORD_BCRYPT);
-            $adulthood = $request->adulthood;
+            if ($register) {
+                $CPF = $request->CPF;
+                $name = $request->name;
+                $CPF_hash = password_hash($CPF, PASSWORD_BCRYPT);
+                $adulthood = $request->adulthood;
 
-            if ($user_register) {
                 $e = new Encrypt();
                 $CPF = $e->encrypt($CPF);
-                $telephone = $e->encrypt($telephone);
+                $name = $e->encrypt($name);
             }
 
             // $hashes = Register::pluck('CPF_hash');
@@ -70,21 +71,31 @@ class UserRegisterController extends Controller
                 ]);
             }
 
-            $user_register = $this->user_register->create([
+            if($request->adulthood == 0){
+                dd('aqui');
+            }
+
+            $register = $this->register->create([
                 'CPF' => $CPF,
                 'CPF_hash' => $CPF_hash,
-                'telephone' => $telephone,
+                'name' => $name,
                 'adulthood' => $adulthood,
             ]);
 
-            if (!$user_register) {
+            if (!$register) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Erro ao cadastrar usuário.',
                 ]);
             }
 
-            if ($user_register) {
+            if ($register) {
+
+                $directoryPath = 'images';
+
+                if (!Storage::disk('public')->exists($directoryPath)) {
+                    Storage::disk('public')->makeDirectory($directoryPath);
+                }
 
                 $session = Session::create([
                     'start_time' => 1,
@@ -95,7 +106,7 @@ class UserRegisterController extends Controller
                     'success' => true,
                     'message' => 'Cadastrado com sucesso.',
                     'data' => [
-                        'idUser' => $user_register['id'],
+                        'idUser' => $register['id'],
                         'idSession' => $session->id
                     ],
                 ]);

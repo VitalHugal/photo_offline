@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('user_registers', function (Blueprint $table) {
             $table->id();
-            $table->string('telephone');
+            $table->string('name');
             $table->string('CPF');
             $table->string('CPF_hash');
             $table->boolean('adulthood')->default(value:0);
             $table->string('fk_id_photo')->nullable();
+            $table->string('responsible_name')->nullable();
+            $table->string('responsible_cpf')->nullable();
+            $table->string('responsible_cpf_hash')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
