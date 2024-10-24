@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('CPF');
             $table->string('CPF_hash');
             $table->boolean('adulthood')->default(value:0);
+            $table->string('fk_id_photo')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

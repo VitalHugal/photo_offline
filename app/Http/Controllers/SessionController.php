@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Session;
 use App\Http\Controllers\Controller;
 use App\Models\InfoParticipation;
+use App\Models\UserRegister;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -80,6 +81,9 @@ class SessionController extends Controller
 
             InfoParticipation::where('id', $id)->update(['end_participation' => $formatedDate]);
 
+            UserRegister::where('id', $id)->update(['fk_id_photo' => null]);
+            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Sessão finalizada, tempo de participação excedido.'
@@ -89,6 +93,8 @@ class SessionController extends Controller
         Session::where('id', $id)->update(['end_time' => 1]);
 
         InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
+
+        UserRegister::where('id', $id)->update(['fk_id_photo' => $id]);
 
         return response()->json([
             'success' => true,
