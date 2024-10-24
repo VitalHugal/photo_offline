@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Register;
+use App\Models\UserRegister;
 use App\Models\Session;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class RegisterController extends Controller
+class UserRegisterController extends Controller
 {
     protected $register;
 
-    public function __construct(Register $register)
+    public function __construct(UserRegister $register)
     {
         $this->register = $register;
     }

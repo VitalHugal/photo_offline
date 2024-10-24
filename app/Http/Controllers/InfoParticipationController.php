@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InfoParticipation;
 use App\Http\Controllers\Controller;
-use App\Models\Register;
+use App\Models\UserRegister;
 use App\Models\Session;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +27,7 @@ class InfoParticipationController extends Controller
     {
         try {
 
-            $idUser = Register::orderBy('id', 'desc')->first();
+            $idUser = UserRegister::orderBy('id', 'desc')->first();
 
             $idUserId = $idUser ? $idUser->id : null;
 

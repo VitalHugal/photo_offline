@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Register extends Model
+class UserRegister extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['telephone', 'CPF', 'CPF_hash'];
-    protected $table = 'register';
+    protected $table = 'user_registers';
     protected $dates = ['deleted_at'];
 
     public function rulesRegister()
