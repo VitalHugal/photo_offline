@@ -63,10 +63,18 @@ class SessionController extends Controller
 
         $formatedDate = $date->format('d-m-Y H:i:s');
 
+        // $name_photo = $request->file('name_photo');
+        
         $name_photo = $request->input('name_photo');
 
+        // ////
+        // $logo_imagem = $request->file('name_photo');
+        // $logo_imagem_urn = $logo_imagem->store('logo', 'public');
+        // dd($logo_imagem_urn);
+        // ////
+
         //se não houver nada na requisição encerra por tempo excedido
-        if ($name_photo === null) {
+        if (!$name_photo) {
 
             Session::where('id', $id)->update(['end_time' => 1]);
 

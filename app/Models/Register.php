@@ -18,7 +18,7 @@ class Register extends Model
     {
         return [
             'telephone' => 'required|digits:9',
-            "CPF" => 'required|digits:11',
+            "CPF" => 'required|digits:11|',
             "CPF_hash" => '',
         ];
     }
@@ -27,7 +27,7 @@ class Register extends Model
     {
         return [
             'required' => 'Campo obrigatório.',
-            'digits:11' => 'O campo deve conter até 9 dígitos.',
+            'digits:9' => 'O campo deve conter até 9 dígitos.',
             'digits:11' => 'O campo deve conter até 11 dígitos.',
         ];
     }
