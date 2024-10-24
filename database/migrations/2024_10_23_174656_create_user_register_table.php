@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('telephone');
             $table->string('CPF');
             $table->string('CPF_hash');
+            $table->boolean('adulthood')->default(value:0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('register');
+        Schema::dropIfExists('user_registers');
     }
 };
