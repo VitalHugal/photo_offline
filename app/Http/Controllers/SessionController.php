@@ -74,14 +74,26 @@ class SessionController extends Controller
         // dd($logo_imagem_urn);
         // ////
 
+        $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+
+        if ($idParticipation) {
+            $idParticipationId = $idParticipation->id ?? null;
+        }
+        
+        $idUser = Register::orderBy('id', 'desc')->first();
+
+        if ($idUser) {
+            $idUserId = $idUser->id ?? null;
+        }
+
         //se não houver nada na requisição encerra por tempo excedido
         if (!$name_photo) {
 
             Session::where('id', $id)->update(['end_time' => 1]);
 
-            InfoParticipation::where('id', $id)->update(['end_participation' => $formatedDate]);
+            InfoParticipation::where('id', $idParticipationId)->update(['end_participation' => $formatedDate]);
 
-            Register::where('id', $id)->update(['fk_id_photo' => null]);
+            Register::where('id', $idUserId)->update(['fk_id_photo' => null]);
 
 
             return response()->json([
@@ -92,9 +104,9 @@ class SessionController extends Controller
 
         Session::where('id', $id)->update(['end_time' => 1]);
 
-        InfoParticipation::where('id', $id)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
+        InfoParticipation::where('id', $idParticipationId)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
 
-        Register::where('id', $id)->update(['fk_id_photo' => $id]);
+        Register::where('id', $idUserId)->update(['fk_id_photo' => $idParticipationId]);
 
         return response()->json([
             'success' => true,
