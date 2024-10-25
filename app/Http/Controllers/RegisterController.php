@@ -22,6 +22,15 @@ class RegisterController extends Controller
     {
         try {
 
+            $checksTheNeedForRegistration = $request->register;
+
+            if ($checksTheNeedForRegistration == 'false' || $checksTheNeedForRegistration == 'False') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Não necessita de cadastro.'
+                ]);
+            }
+
             $register = $request->validate(
                 $this->register->rulesRegister(),
                 $this->register->feedbackRegister()
@@ -67,7 +76,7 @@ class RegisterController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Sessão em andamento.',
-                    'data' => $idSession
+                    'data' => ['idSession' => $idSession]
                 ]);
             }
 
@@ -110,7 +119,7 @@ class RegisterController extends Controller
 
             if (!$register) {
                 return response()->json([
-                    'success' => true,
+                    'success' => false,
                     'message' => 'Erro ao cadastrar usuário.',
                 ]);
             }

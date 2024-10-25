@@ -27,6 +27,18 @@ class InfoParticipationController extends Controller
     {
         try {
 
+            //pega o ultimo id que esteja em em progresso
+            $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+
+            $checksTheNeedForRegistration = $request->register;
+
+            if ($session == false && ($checksTheNeedForRegistration === 'true' || $checksTheNeedForRegistration === 'True')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Necessita de cadastro.'
+                ]);
+            }
+
             $idUser = Register::orderBy('id', 'desc')->first();
 
             $idUserId = $idUser ? $idUser->id : null;
@@ -49,28 +61,83 @@ class InfoParticipationController extends Controller
 
             $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
 
-            $idParticipationId = $idParticipation ? $idParticipation->id : null;
-
-            if ($session) {
-                $idSession == $idUserId;
-                $idParticipationId < $idSession;
+            if ($idParticipation) {
+                $starParticipation = $idParticipation->star_participation;
+                $endParticipation = $idParticipation->end_participation;
+                if ($starParticipation == true && $endParticipation == null) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Participação em andamento.",
+                    ]);
+                }
             }
 
-            if ($idParticipationId >= $idSession) {
+            if(!$idParticipation){
+                
+            }
+
+            // if ($idParticipationId >= $idSession) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Sessão em andamento.',
+            //         'data' => $idSession
+            //     ]);
+            // }
+
+            // if (!$session) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Sessão em andamento.',
+            //         'data' => $idSession
+            //     ]);
+            // }
+
+            if ($checksTheNeedForRegistration == 'false' || $checksTheNeedForRegistration == 'False') {
+
+                $info = $request->validate(
+                    $this->info->rulesParticipation(),
+                    $this->info->feedbackParticipation()
+                );
+
+                $info = $this->info->create([
+                    'start_participation' => $formatedDate,
+                ]);
+
+                if (!$info) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Erro ao criar idParticpation',
+                    ]);
+                }
+
+                $session = Session::create([
+                    'start_time' => 1,
+                    'in_progress'  => 1,
+                ]);
+
+                if (!$session) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Erro ao criar idSection',
+                    ]);
+                }
+
+                $directoryPath = 'images';
+
+                if (!Storage::disk('public')->exists($directoryPath)) {
+                    Storage::disk('public')->makeDirectory($directoryPath);
+                }
+
+
+                $idSession = $session->id;
+
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Sessão em andamento.',
-                    'data' => $idSession
+                    'success' => true,
+                    'message' => 'Usuario e seção criados com sucesso.',
+                    'data' => ['idParticipation' => $info->id, 'idSection' => $idSession],
                 ]);
             }
 
-            if (!$session) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Sessão em andamento.',
-                    'data' => $idSession
-                ]);
-            }
             $info = $request->validate(
                 $this->info->rulesParticipation(),
                 $this->info->feedbackParticipation()
@@ -117,7 +184,7 @@ class InfoParticipationController extends Controller
         if ($participationStar == true && $participationEnd == null) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sessão em andamento.',
+                'message' => 'Participação em andamento.',
                 'data' => $idParticipationId,
             ]);
         } else {
