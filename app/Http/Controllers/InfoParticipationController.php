@@ -171,29 +171,6 @@ class InfoParticipationController extends Controller
         }
     }
 
-    public function participationActive()
-    {
-        $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
-
-        $participationStar = $idParticipation->start_participation;
-        $participationEnd = $idParticipation->end_participation;
-
-        $idParticipationId =  $idParticipation->id;
-
-        if ($participationStar == true && $participationEnd == null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Participação em andamento.',
-                'data' => $idParticipationId,
-            ]);
-        } else {
-            return response()->json([
-                'success' => true,
-                'message' => 'Disponível para iniciar participation.',
-            ]);
-        }
-    }
-
     public function getPhoto($id)
     {
         $idParticipation = $this->info->find($id);

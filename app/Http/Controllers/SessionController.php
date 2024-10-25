@@ -21,24 +21,23 @@ class SessionController extends Controller
 
     public function sessionActive()
     {
-        //pega o ultimo id que esteja em progresso
-        $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+        $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
 
-        // caso seja vazio disponivel
-        if ($session === null) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Disponível para iniciar sessão',
-            ]);
-        }
+        $participationStar = $idParticipation->start_participation;
+        $participationEnd = $idParticipation->end_participation;
 
-        // caso seja diferente de vazio seção em andamento
-        if ($session !== null) {
-            $idSession = $session->id;
+        $idParticipationId =  $idParticipation->id;
+
+        if ($participationStar == true && $participationEnd == null) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sessão em andamento.',
-                'data' => $idSession
+                'message' => 'Participação em andamento.',
+                'data' => $idParticipationId,
+            ]);
+        } else {
+            return response()->json([
+                'success' => true,
+                'message' => 'Disponível para iniciar participação.',
             ]);
         }
     }
@@ -65,7 +64,7 @@ class SessionController extends Controller
         $formatedDate = $date->format('d-m-Y H:i:s');
 
         // $name_photo = $request->file('name_photo');
-        
+
 
         $name_photo = $request->input('name_photo');
 

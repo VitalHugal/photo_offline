@@ -15,10 +15,10 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [RegisterController::class, 'register']);
 
 //verficar se tem sessão disponivel ou não
-Route::get('/session-active', [SessionController::class, 'sessionActive']);
+Route::get('/session-active', [SessionController::class, 'sessionActive']); //verfica se tem participação ativa DEPOIS MUDAR NOME DA ROTA E METODO
 
-//verficar se tem participation disponivel ou não
-Route::get('/participation-active', [InfoParticipationController::class, 'participationActive']);
+// //verficar se tem participation disponivel ou não
+// Route::get('/participation-active', [InfoParticipationController::class, 'participationActive']);
 
 //finalizar sessão ativa
 Route::post('/finishing-session/{id}', [SessionController::class, 'finishingSession']);
