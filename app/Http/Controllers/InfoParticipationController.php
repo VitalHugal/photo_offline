@@ -62,21 +62,19 @@ class InfoParticipationController extends Controller
             $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
 
             if ($idParticipation) {
-                $starParticipation = $idParticipation->star_participation;
-                $endParticipation = $idParticipation->end_participation;
-                if ($starParticipation == true && $endParticipation == null) {
+                
+                $startParticipation = $idParticipation ? $idParticipation->start_participation : null;
+                $endParticipation = $idParticipation ? $idParticipation->end_participation : null;
+                
+                if ($startParticipation == true && $endParticipation == null) {
                     return response()->json([
                         'success' => false,
                         'message' => "Participação em andamento.",
+                        'data' => ['idParticipation' => $idParticipation->id],
                     ]);
                 }
             }
 
-            if (!$idParticipation) {
-            }
-
-            dd('aqui');
-            
             // if ($idParticipationId >= $idSession) {
             //     return response()->json([
             //         'success' => false,
