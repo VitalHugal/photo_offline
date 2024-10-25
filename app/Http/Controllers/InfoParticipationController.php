@@ -27,12 +27,11 @@ class InfoParticipationController extends Controller
     {
         try {
 
-            //pega o ultimo id que esteja em em progresso
             $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
             $checksTheNeedForRegistration = $request->register;
 
-            if ($session == false && ($checksTheNeedForRegistration === 'true' || $checksTheNeedForRegistration === 'True')) {
+            if ($session == false && ($checksTheNeedForRegistration === true)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Necessita de cadastro.'
@@ -62,10 +61,10 @@ class InfoParticipationController extends Controller
             $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
 
             if ($idParticipation) {
-                
+
                 $startParticipation = $idParticipation ? $idParticipation->start_participation : null;
                 $endParticipation = $idParticipation ? $idParticipation->end_participation : null;
-                
+
                 if ($startParticipation == true && $endParticipation == null) {
                     return response()->json([
                         'success' => false,
@@ -91,7 +90,7 @@ class InfoParticipationController extends Controller
             //     ]);
             // }
 
-            if ($checksTheNeedForRegistration == 'false' || $checksTheNeedForRegistration == 'False') {
+            if ($checksTheNeedForRegistration == false) {
 
                 $info = $request->validate(
                     $this->info->rulesParticipation(),
@@ -173,76 +172,119 @@ class InfoParticipationController extends Controller
 
     public function getPhoto($id)
     {
-        $idParticipation = $this->info->find($id);
+        try {
+            $idParticipation = $this->info->find($id);
 
-        if ($idParticipation === null) {
+            if ($idParticipation === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nenhum id encontrado.',
+                ]);
+            }
+
+            $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+
+            if ($idParticipation) {
+
+                $startParticipation = $idParticipation ? $idParticipation->start_participation : null;
+                $endParticipation = $idParticipation ? $idParticipation->end_participation : null;
+
+                if ($startParticipation == true && $endParticipation == null) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Participação em andamento.",
+                        'data' => ['idParticipation' => $idParticipation->id],
+                    ]);
+                }
+            }
+
+            $photo = $idParticipation->name_photo;
+
+            if ($photo === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nenhuma foto encontrada.',
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $photo,
+            ]);
+        } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,
-                'message' => 'Nenhum id encontrado.',
+                'message' => 'Error DB: ' . $qe->getMessage(),
             ]);
-        }
-
-        $session = Session::where('id', $id)->where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->first();
-
-        if ($session !== null) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Em andamento...',
+                'message' => 'Error: ' . $e->getMessage(),
             ]);
         }
-
-        $photo = $idParticipation->name_photo;
-
-        if ($photo === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Nenhuma foto encontrada.',
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $photo,
-        ]);
     }
 
     public function downloadPhoto($id)
     {
-        $idParticipation = $this->info->find($id);
+        try {
+            $idParticipation = $this->info->find($id);
 
-        if ($idParticipation === null) {
+            if ($idParticipation === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nenhum id encontrado.',
+                ]);
+            }
+
+            $photo = $idParticipation->name_photo;
+
+            if (!$photo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nenhuma foto encontrada.',
+                ]);
+            }
+
+            return Storage::disk('public')->download($photo);
+        } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,
-                'message' => 'Nenhum id encontrado.',
+                'message' => 'Error DB: ' . $qe->getMessage(),
             ]);
-        }
-
-        $photo = $idParticipation->name_photo;
-
-        if (!$photo) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Nenhuma foto encontrada.',
+                'message' => 'Error: ' . $e->getMessage(),
             ]);
         }
-
-        return Storage::disk('public')->download($photo);
     }
 
     public function infoZabbix()
     {
-        $infoParticipations = InfoParticipation::all();
+        try {
+            $infoParticipations = InfoParticipation::all();
 
-        $infoPhoto = InfoParticipation::whereNotNull('name_photo')->get();
+            $infoPhoto = InfoParticipation::whereNotNull('name_photo')->get();
 
-        $participations = count($infoParticipations);
+            $participations = count($infoParticipations);
 
-        $photos = count($infoPhoto);
+            $photos = count($infoPhoto);
 
-        return response()->json([
-            'success' => true,
-            'participation' => $participations,
-            'images_sent' =>  $photos,
-        ]);
+            return response()->json([
+                'success' => true,
+                'participation' => $participations,
+                'images_sent' =>  $photos,
+            ]);
+        } catch (QueryException $qe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error DB: ' . $qe->getMessage(),
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ]);
+        }
     }
 }
