@@ -72,10 +72,11 @@ class InfoParticipationController extends Controller
                 }
             }
 
-            if(!$idParticipation){
-                
+            if (!$idParticipation) {
             }
 
+            dd('aqui');
+            
             // if ($idParticipationId >= $idSession) {
             //     return response()->json([
             //         'success' => false,
