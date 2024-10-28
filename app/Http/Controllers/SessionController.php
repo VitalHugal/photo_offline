@@ -33,13 +33,13 @@ class SessionController extends Controller
 
             if ($participationStar == true && $participationEnd == null) {
                 return response()->json([
-                    'success' => false,
+                    'success' => true,
                     'message' => 'Participação em andamento.',
                     'data' => $idParticipationId,
                 ]);
             } else {
                 return response()->json([
-                    'success' => true,
+                    'success' => false,
                     'message' => 'Disponível para iniciar participação.',
                 ]);
             }

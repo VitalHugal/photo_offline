@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use SebastianBergmann\Timer\Timer;
 
 class RegisterController extends Controller
 {
@@ -24,7 +25,7 @@ class RegisterController extends Controller
 
             $checksTheNeedForRegistration = $request->register;
 
-            if ($checksTheNeedForRegistration == false ) {
+            if ($checksTheNeedForRegistration == false) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Não necessita de cadastro.'
