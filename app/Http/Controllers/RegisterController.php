@@ -23,6 +23,12 @@ class RegisterController extends Controller
     {
         try {
 
+            $sessionDB = Session::orderBy('id', 'desc')->first();
+
+            $hoursTime = $sessionDB->created_at;
+
+            dd($hoursTime);
+
             $checksTheNeedForRegistration = $request->register;
 
             if ($checksTheNeedForRegistration == false) {
