@@ -34,23 +34,6 @@ class RegisterController extends Controller
                 ]);
             }
 
-            $date = new DateTime();
-            $serverTimezone = $date->getTimezone()->getName();
-            $saoPauloTimezone = 'America/Sao_Paulo';
-
-            if ($serverTimezone !== $saoPauloTimezone) {
-                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
-            }
-
-            $formatedDate = $date->format('d-m-Y H:i:s');
-            $sessionDB = Session::orderBy('id', 'desc')->first();
-
-            $createdSession = $sessionDB->created_at;
-
-            $createdSession->modify('+2 minutes');
-
-
-
             $register = $request->validate(
                 $this->register->rulesRegister(),
                 $this->register->feedbackRegister()
@@ -86,16 +69,29 @@ class RegisterController extends Controller
             //     ]);
             // }
 
+            
+            // bloco de código para validar 2 minutos de session para poder finalizala
+            $date = new DateTime();
+            $serverTimezone = $date->getTimezone()->getName();
+            $saoPauloTimezone = 'America/Sao_Paulo';
+            if ($serverTimezone !== $saoPauloTimezone) {
+                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
+            }
+            $formatedDate = $date->format('Y-m-d H:i:s');
+            $sessionDB = Session::orderBy('id', 'desc')->first();
+            $createdSession = $sessionDB->created_at;
+            $newDate = $createdSession->modify('+2 minutes');
+
+            if ($formatedDate > $newDate) {
+                Session::where('id', $sessionDB->id)->update(['end_time' => 1]);
+            }
+
             //pega o ultimo id que esteja em em progresso
             $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
             if ($session !== null) {
 
                 $idSession = $session->id;
-
-                if ($formatedDate > $createdSession) {
-                    Session::where('id', $sessionDB->id)->update(['end_time' => 1]);
-                }
 
                 return response()->json([
                     'success' => false,
