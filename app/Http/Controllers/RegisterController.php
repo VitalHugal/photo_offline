@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Register;
 use App\Models\Session;
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -23,12 +25,6 @@ class RegisterController extends Controller
     {
         try {
 
-            $sessionDB = Session::orderBy('id', 'desc')->first();
-
-            $hoursTime = $sessionDB->created_at;
-
-            dd($hoursTime);
-
             $checksTheNeedForRegistration = $request->register;
 
             if ($checksTheNeedForRegistration == false) {
@@ -37,6 +33,23 @@ class RegisterController extends Controller
                     'message' => 'Não necessita de cadastro.'
                 ]);
             }
+
+            $date = new DateTime();
+            $serverTimezone = $date->getTimezone()->getName();
+            $saoPauloTimezone = 'America/Sao_Paulo';
+
+            if ($serverTimezone !== $saoPauloTimezone) {
+                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
+            }
+
+            $formatedDate = $date->format('d-m-Y H:i:s');
+            $sessionDB = Session::orderBy('id', 'desc')->first();
+
+            $createdSession = $sessionDB->created_at;
+
+            $createdSession->modify('+2 minutes');
+
+
 
             $register = $request->validate(
                 $this->register->rulesRegister(),
@@ -79,6 +92,10 @@ class RegisterController extends Controller
             if ($session !== null) {
 
                 $idSession = $session->id;
+
+                if ($formatedDate > $createdSession) {
+                    Session::where('id', $sessionDB->id)->update(['end_time' => 1]);
+                }
 
                 return response()->json([
                     'success' => false,
