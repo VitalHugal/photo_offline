@@ -155,7 +155,7 @@ class InfoParticipationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Participação iniciada',
-                'data' => ['idParticpation' => $info['id']],
+                'data' => ['idParticipation' => $info['id']],
             ]);
         } catch (QueryException $qe) {
             return response()->json([
