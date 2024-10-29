@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('start_participation')->nullable();
             $table->string('end_participation')->nullable();
             $table->string('name_photo')->nullable();
+            $table->string('register')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

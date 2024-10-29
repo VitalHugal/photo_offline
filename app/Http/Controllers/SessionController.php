@@ -81,8 +81,6 @@ class SessionController extends Controller
             $formatedDate = $date->format('d-m-Y H:i:s');
 
             // $name_photo = $request->file('name_photo');
-
-
             $name_photo = $request->input('name_photo');
 
             // ////
@@ -95,6 +93,37 @@ class SessionController extends Controller
 
             if ($idParticipation) {
                 $idParticipationId = $idParticipation->id;
+            }
+
+            $register = $idParticipation->register;
+
+            if ($register == 'false') {
+
+                $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+
+                if ($session) {
+                    $idSession = $session->id;
+                }
+
+                //se não houver nada na requisição encerra por tempo excedido
+                if ($name_photo === null) {
+
+                    Session::where('id', $idSession)->update(['end_time' => 1]);
+                    InfoParticipation::where('id', $idParticipationId)->update(['end_participation' => $formatedDate]);
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sessão finalizada, tempo de participação excedido.'
+                    ]);
+                }
+
+                Session::where('id', $idSession)->update(['end_time' => 1]);
+                InfoParticipation::where('id', $idParticipationId)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sessão finalizada.'
+                ]);
             }
 
             $idUser = Register::where('fk_id_photo', $id)->first();

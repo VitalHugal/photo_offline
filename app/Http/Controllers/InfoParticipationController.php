@@ -31,7 +31,7 @@ class InfoParticipationController extends Controller
 
             $checksTheNeedForRegistration = $request->register;
 
-            if ($session == false && ($checksTheNeedForRegistration === true)) {
+            if ($session == false && ($checksTheNeedForRegistration === true || $checksTheNeedForRegistration === 'true')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Necessita de cadastro.'
@@ -90,7 +90,7 @@ class InfoParticipationController extends Controller
             //     ]);
             // }
 
-            if ($checksTheNeedForRegistration == false) {
+            if ($checksTheNeedForRegistration === false || $checksTheNeedForRegistration === 'false') {
 
                 $info = $request->validate(
                     $this->info->rulesParticipation(),
@@ -126,6 +126,7 @@ class InfoParticipationController extends Controller
                     Storage::disk('public')->makeDirectory($directoryPath);
                 }
 
+                InfoParticipation::where('id', $info->id)->update(['register' => 'false']);
 
                 $idSession = $session->id;
 
@@ -159,6 +160,8 @@ class InfoParticipationController extends Controller
                     'message' => 'Erro ao criar idParticpation',
                 ]);
             }
+
+            InfoParticipation::where('id', $info['id'])->update(['register' => 'true']);
 
             return response()->json([
                 'success' => true,

@@ -11,7 +11,7 @@ class InfoParticipation extends Model
 
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['start_participation', 'end_participation', 'name_photo',];
+    protected $fillable = ['start_participation', 'end_participation', 'name_photo', 'register'];
     protected $table = 'info_participations';
     protected $dates = 'deleted_at';
 
@@ -21,6 +21,7 @@ class InfoParticipation extends Model
             'start_participation' => 'in:1|nullable',
             'end_participation' =>  'in:1|nullable',
             'name_photo' =>  'max:255|nullable',
+            'register' =>  '',
         ];
     }
     public function feedbackParticipation()
