@@ -16,10 +16,10 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [RegisterController::class, 'register']);
 
 //verficar se tem sessão disponivel ou não
-Route::get('/session-active', [SessionController::class, 'participationActive']); 
+Route::get('/participation-active', [SessionController::class, 'participationActive']); 
 
 //finalizar sessão ativa
-Route::post('/finishing-session/{id}', [SessionController::class, 'finishing']);
+Route::post('/finishing-participation/{id}', [SessionController::class, 'finishing']);
 
 //iniciar sessão e idUser
 Route::post('/start-participation', [InfoParticipationController::class, "startParticipation"]);

@@ -145,13 +145,10 @@ class SessionController extends Controller
 
     public function finishingSessionForce()
     {
-
         try {
-
             $session = Session::orderBy('id', 'desc')->first();
-
             $idSession = $session->id;
-            
+
             if ($session->end_time == 1) {
                 return response()->json([
                     'success' => false,
