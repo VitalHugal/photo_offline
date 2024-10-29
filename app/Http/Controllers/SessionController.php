@@ -56,7 +56,7 @@ class SessionController extends Controller
         }
     }
 
-    public function finishingSession(Request $request, $id)
+    public function finishing(Request $request, $id)
     {
         try {
             $finishing = $this->session->find($id);
@@ -127,6 +127,30 @@ class SessionController extends Controller
                 'success' => true,
                 'message' => 'Sessão finalizada.'
             ]);
+        } catch (QueryException $qe) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error DB: ' . $qe->getMessage(),
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function finishingSessionForce()
+    {
+
+        try {
+
+            $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+
+            if ($idParticipation) {
+                $idParticipationId = $idParticipation->id ?? null;
+            }
+            
         } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,

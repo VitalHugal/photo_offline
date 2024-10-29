@@ -38,9 +38,9 @@ class InfoParticipationController extends Controller
                 ]);
             }
 
-            $idUser = Register::orderBy('id', 'desc')->first();
+            // $idUser = Register::orderBy('id', 'desc')->first();
 
-            $idUserId = $idUser ? $idUser->id : null;
+            // $idUserId = $idUser ? $idUser->id : null;
 
             //verfica se o server esta com dateTime definido para america/sao_paulo senão atualiza e formata datetime para o padrão BR
             $date = new DateTime();

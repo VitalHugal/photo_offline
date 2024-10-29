@@ -10,7 +10,7 @@ class Register extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'CPF', 'CPF_hash', 'adulthood', 'fk_id_photo', 'responsible_name', 'responsible_cpf', 'responsible_cpf_hash'];
+    protected $fillable = ['name', 'CPF', 'CPF_hash', 'adulthood', 'fk_id_photo', 'fk_id_session', 'responsible_name', 'responsible_cpf', 'responsible_cpf_hash'];
     protected $table = 'user_registers';
     protected $dates = ['deleted_at'];
 
@@ -22,6 +22,7 @@ class Register extends Model
             "CPF" => 'required|digits:11',
             "CPF_hash" => '',
             "fk_id_photo" => '',
+            "fk_id_session" => '',
         ];
     }
     

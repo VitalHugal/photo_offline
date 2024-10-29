@@ -5,6 +5,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\teste;
 use App\Models\InfoParticipation;
+use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,7 @@ Route::get('/session-active', [SessionController::class, 'sessionActive']); //ve
 // Route::get('/participation-active', [InfoParticipationController::class, 'participationActive']);
 
 //finalizar sessão ativa
-Route::post('/finishing-session/{id}', [SessionController::class, 'finishingSession']);
+Route::post('/finishing-session/{id}', [SessionController::class, 'finishing']);
 
 //iniciar sessão e idUser
 Route::post('/start-participation', [InfoParticipationController::class, "startParticipation"]);
@@ -34,3 +35,6 @@ Route::get('/download-photo/{id}', [InfoParticipationController::class, "downloa
 
 //informações sobre as participações
 Route::get('/info-zabbix', [InfoParticipationController::class, "infoZabbix"]);
+
+//finalizando a seção que esta em andamento de forma forçada
+Route::post('/finishing-session-force', [SessionController::class , 'finishingSessionForce']);

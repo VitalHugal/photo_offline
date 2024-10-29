@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('CPF_hash');
             $table->boolean('adulthood')->default(value:0);
             $table->foreignId('fk_id_photo')->nullable()->constrained('info_participations')->onUpdate('cascade');
+            $table->foreignId('fk_id_session')->nullable()->constrained('session')->onUpdate('cascade');
             $table->string('responsible_name')->nullable();
             $table->string('responsible_cpf')->nullable();
             $table->string('responsible_cpf_hash')->nullable();

@@ -69,23 +69,6 @@ class RegisterController extends Controller
             //     ]);
             // }
 
-            
-            // bloco de código para validar 2 minutos de session para poder finalizala
-            $date = new DateTime();
-            $serverTimezone = $date->getTimezone()->getName();
-            $saoPauloTimezone = 'America/Sao_Paulo';
-            if ($serverTimezone !== $saoPauloTimezone) {
-                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
-            }
-            $formatedDate = $date->format('Y-m-d H:i:s');
-            $sessionDB = Session::orderBy('id', 'desc')->first();
-            $createdSession = $sessionDB->created_at;
-            $newDate = $createdSession->modify('+2 minutes');
-
-            if ($formatedDate > $newDate) {
-                Session::where('id', $sessionDB->id)->update(['end_time' => 1]);
-            }
-
             //pega o ultimo id que esteja em em progresso
             $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
@@ -156,6 +139,8 @@ class RegisterController extends Controller
                     'start_time' => 1,
                     'in_progress'  => 1,
                 ]);
+
+                Register::where('id', $register['id'])->update(['fk_id_session' => $session->id]);
 
                 return response()->json([
                     'success' => true,
