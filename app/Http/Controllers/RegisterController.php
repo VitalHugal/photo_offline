@@ -27,7 +27,7 @@ class RegisterController extends Controller
 
             $checksTheNeedForRegistration = $request->register;
 
-            if ($checksTheNeedForRegistration == 'false' || $checksTheNeedForRegistration == false) {
+            if ($checksTheNeedForRegistration === 'false' || $checksTheNeedForRegistration === false) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Não necessita de cadastro.'
