@@ -15,13 +15,15 @@ use Illuminate\Http\Request;
 class SessionController extends Controller
 {
     protected $session;
+    protected $info;
 
-    public function __construct(Session $session)
+    public function __construct(Session $session, InfoParticipation $info)
     {
         $this->session = $session;
+        $this->info = $info;
     }
 
-    public function sessionActive()
+    public function participationActive()
     {
         try {
             $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
@@ -59,7 +61,7 @@ class SessionController extends Controller
     public function finishing(Request $request, $id)
     {
         try {
-            $finishing = $this->session->find($id);
+            $finishing = $this->info->find($id);
 
             if ($finishing === null) {
                 return response()->json([
@@ -89,22 +91,23 @@ class SessionController extends Controller
             // dd($logo_imagem_urn);
             // ////
 
-            $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+            $idParticipation = InfoParticipation::where('id', $id)->first();
 
             if ($idParticipation) {
-                $idParticipationId = $idParticipation->id ?? null;
+                $idParticipationId = $idParticipation->id;
             }
 
-            $idUser = Register::orderBy('id', 'desc')->first();
+            $idUser = Register::where('fk_id_photo', $id)->first();
 
             if ($idUser) {
-                $idUserId = $idUser->id ?? null;
+                $idUserId = $idUser->id;
+                $idSession = $idUser->fk_id_session;
             }
 
             //se não houver nada na requisição encerra por tempo excedido
             if (!$name_photo) {
 
-                Session::where('id', $id)->update(['end_time' => 1]);
+                Session::where('id', $idSession)->update(['end_time' => 1]);
 
                 InfoParticipation::where('id', $idParticipationId)->update(['end_participation' => $formatedDate]);
 
@@ -117,7 +120,7 @@ class SessionController extends Controller
                 ]);
             }
 
-            Session::where('id', $id)->update(['end_time' => 1]);
+            Session::where('id', $idSession)->update(['end_time' => 1]);
 
             InfoParticipation::where('id', $idParticipationId)->update(['name_photo' => $name_photo, 'end_participation' => $formatedDate]);
 
@@ -145,12 +148,23 @@ class SessionController extends Controller
 
         try {
 
-            $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+            $session = Session::orderBy('id', 'desc')->first();
 
-            if ($idParticipation) {
-                $idParticipationId = $idParticipation->id ?? null;
-            }
+            $idSession = $session->id;
             
+            if ($session->end_time == 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nenhuma sessão ativa para finalizar.',
+                ]);
+            }
+
+            Session::where('id', $idSession)->update(['end_time' => 1]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sessão finalizada.',
+            ]);
         } catch (QueryException $qe) {
             return response()->json([
                 'success' => false,

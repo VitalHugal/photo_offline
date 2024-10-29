@@ -145,6 +145,14 @@ class InfoParticipationController extends Controller
                 'start_participation' => $formatedDate,
             ]);
 
+            $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
+
+            if ($session !== null) {
+                $idSession = $session->id;
+            }
+
+            Register::where('fk_id_session', $idSession)->update(['fk_id_photo' => $info['id']]);
+
             if (!$info) {
                 return response()->json([
                     'success' => false,
