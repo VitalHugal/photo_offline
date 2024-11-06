@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DecryptController;
 use App\Http\Controllers\InfoParticipationController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
@@ -14,6 +15,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/register', [RegisterController::class, 'register']);
+
+Route::post('/decrypt', [DecryptController::class, 'decrypt']);
 
 //verficar se tem sessão disponivel ou não
 Route::get('/participation-active', [SessionController::class, 'participationActive']); 

@@ -10,6 +10,7 @@ use DateTimeZone;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use SebastianBergmann\Timer\Timer;
 
