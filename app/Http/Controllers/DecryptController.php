@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
 class DecryptController extends Controller
@@ -12,7 +13,6 @@ class DecryptController extends Controller
     public function decrypt()
     {
         $data = DB::table('decrypt_info')->get();
-        
         $d = new Encrypt();
 
         foreach ($data as $item) {
@@ -26,7 +26,12 @@ class DecryptController extends Controller
                         'name' => $decryptedName,
                         'CPF' => $decryptedCPF,
                     ]);
-            } catch (\Exception $e) {
+            } catch (QueryException $qe) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error:' . $qe->getMessage(),
+                ]);
+            } catch (Exception $e) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Error:' . $e->getMessage(),
