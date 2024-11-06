@@ -101,9 +101,16 @@ class SessionController extends Controller
 
                 $session = Session::where('start_time', 1)->where('in_progress', 1)->where('end_time', 0)->latest()->first();
 
-                if ($session) {
-                    $idSession = $session->id;
+                //add
+                if (!$session) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nenhuma sessão para finalizar.'
+                    ]);
                 }
+                
+                $idSession = $session->id;
+                //add
 
                 //se não houver nada na requisição encerra por tempo excedido
                 if ($name_photo === null) {
@@ -142,7 +149,6 @@ class SessionController extends Controller
 
                 Register::where('id', $idUserId)->update(['fk_id_photo' => null]);
 
-
                 return response()->json([
                     'success' => false,
                     'message' => 'Sessão finalizada, tempo de participação excedido.'
@@ -176,13 +182,42 @@ class SessionController extends Controller
     {
         try {
             $session = Session::orderBy('id', 'desc')->first();
-            $idSession = $session->id;
+
+            if ($session) {
+                $idSession = $session->id;
+            }
 
             if ($session->end_time == 1) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Nenhuma sessão ativa para finalizar.',
                 ]);
+            }
+
+            $date = new DateTime();
+            $serverTimezone = $date->getTimezone()->getName();
+            $saoPauloTimezone = 'America/Sao_Paulo';
+
+            if ($serverTimezone !== $saoPauloTimezone) {
+                $date->setTimezone(new DateTimeZone($saoPauloTimezone));
+            }
+
+            $formatedDate = $date->format('d-m-Y H:i:s');
+
+            $idParticipation = InfoParticipation::orderBy('id', 'desc')->first();
+
+            if ($idParticipation) {
+                $participationStar = $idParticipation->start_participation;
+                $participationEnd = $idParticipation->end_participation;
+                $idParticipationId =  $idParticipation->id;
+
+
+                if ($participationStar == true && $participationEnd == null) {
+
+                    InfoParticipation::where('id', $idParticipationId)->update(['name_photo' => null, 'end_participation' => $formatedDate]);
+                    Session::where('id', $idSession)->update(['end_time' => 1]);
+                }
+
             }
 
             Session::where('id', $idSession)->update(['end_time' => 1]);
